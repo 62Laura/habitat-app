@@ -1,0 +1,37 @@
+dependencies: \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/strings/internal/cord_rep_btree_reader.cc \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/Target\ Support\ Files/abseil/abseil-prefix.pch \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/strings/internal/cord_rep_btree_reader.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/config.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/options.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/policy_checks.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/strings/internal/cord_data_edge.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/strings/internal/cord_internal.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/attributes.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/internal/endian.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/casts.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/internal/identity.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/macros.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/optimization.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/port.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/meta/type_traits.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/internal/unaligned_access.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/nullability.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/internal/nullability_impl.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/internal/invoke.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/container/internal/compressed_tuple.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/utility/utility.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/internal/inline_variable.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/container/internal/container_memory.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/memory/memory.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/strings/string_view.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/internal/throw_delegate.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/strings/internal/cord_rep_flat.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/strings/internal/cord_rep_btree.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/internal/raw_logging.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/internal/atomic_hook.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/base/log_severity.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/types/span.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/types/internal/span.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/algorithm/algorithm.h \
+  /Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/abseil/absl/strings/internal/cord_rep_btree_navigator.h

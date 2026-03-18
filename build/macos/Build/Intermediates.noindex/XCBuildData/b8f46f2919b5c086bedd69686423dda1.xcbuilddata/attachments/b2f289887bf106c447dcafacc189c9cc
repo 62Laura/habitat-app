@@ -1,0 +1,29 @@
+{
+  "" : {
+    "diagnostics" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseSharedSwift-primary.dia",
+    "emit-module-dependencies" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseSharedSwift-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseSharedSwift-primary-emit-module.dia",
+    "pch" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseSharedSwift-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseSharedSwift-primary.swiftdeps"
+  },
+  "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/FirebaseSharedSwift/FirebaseSharedSwift/Sources/FirebaseRemoteConfigValueDecoding.swift" : {
+    "const-values" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseRemoteConfigValueDecoding.swiftconstvalues",
+    "dependencies" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseRemoteConfigValueDecoding.d",
+    "diagnostics" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseRemoteConfigValueDecoding.dia",
+    "index-unit-output-path" : "/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseRemoteConfigValueDecoding.o",
+    "llvm-bc" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseRemoteConfigValueDecoding.bc",
+    "object" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseRemoteConfigValueDecoding.o",
+    "swift-dependencies" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseRemoteConfigValueDecoding.swiftdeps",
+    "swiftmodule" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseRemoteConfigValueDecoding~partial.swiftmodule"
+  },
+  "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/macos/Pods/FirebaseSharedSwift/FirebaseSharedSwift/Sources/third_party/FirebaseDataEncoder/FirebaseDataEncoder.swift" : {
+    "const-values" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseDataEncoder.swiftconstvalues",
+    "dependencies" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseDataEncoder.d",
+    "diagnostics" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseDataEncoder.dia",
+    "index-unit-output-path" : "/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseDataEncoder.o",
+    "llvm-bc" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseDataEncoder.bc",
+    "object" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseDataEncoder.o",
+    "swift-dependencies" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseDataEncoder.swiftdeps",
+    "swiftmodule" : "/Users/manziivan453icloud.com/Downloads/Projects/Habitat_App/habita_app/build/macos/Build/Intermediates.noindex/Pods.build/Debug/FirebaseSharedSwift.build/Objects-normal/arm64/FirebaseDataEncoder~partial.swiftmodule"
+  }
+}
