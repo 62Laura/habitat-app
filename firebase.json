@@ -1,0 +1,44 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "habitat-app-17df5",
+          "appId": "1:589368299920:android:bb01297e869fafabb9a315",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "habitat-app-17df5",
+          "appId": "1:589368299920:ios:e452c87f51e43d83b9a315",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "habitat-app-17df5",
+          "appId": "1:589368299920:ios:e452c87f51e43d83b9a315",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "habitat-app-17df5",
+          "configurations": {
+            "android": "1:589368299920:android:bb01297e869fafabb9a315",
+            "ios": "1:589368299920:ios:e452c87f51e43d83b9a315",
+            "macos": "1:589368299920:ios:e452c87f51e43d83b9a315",
+            "web": "1:589368299920:web:4a473235b37dc8a7b9a315",
+            "windows": "1:589368299920:web:37ee0b66e5237961b9a315"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
