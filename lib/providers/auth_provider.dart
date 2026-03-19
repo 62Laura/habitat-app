@@ -216,7 +216,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         print(
             'AuthNotifier: Sign out successful, stream will handle state update');
 
-      // Give the auth stream a moment to process the sign-out
+      // Give the auth a moment to process the sign-out
       await Future.delayed(const Duration(milliseconds: 200));
 
       state = state.copyWith(isLoading: false);
