@@ -42,7 +42,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final authNotifier = ref.read(authProvider.notifier);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Habitat App'),
@@ -61,21 +61,27 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.error.withOpacity(0.1),
-                  border: Border.all(color: Theme.of(context).colorScheme.error.withOpacity(0.2)),
+                  border: Border.all(
+                      color:
+                          Theme.of(context).colorScheme.error.withOpacity(0.2)),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.error, color: Theme.of(context).colorScheme.error, size: 20),
+                    Icon(Icons.error,
+                        color: Theme.of(context).colorScheme.error, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         authState.errorMessage!,
-                        style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 14),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize: 14),
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close, color: Theme.of(context).colorScheme.error, size: 20),
+                      icon: Icon(Icons.close,
+                          color: Theme.of(context).colorScheme.error, size: 20),
                       onPressed: () {
                         authNotifier.clearError();
                       },
@@ -108,7 +114,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               'After creating your account, you will need to sign in',
               style: TextStyle(
                 fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withOpacity(0.7),
                 fontStyle: FontStyle.italic,
               ),
               textAlign: TextAlign.center,
@@ -147,9 +156,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
                   ),
                   onPressed: () {
                     setState(() {
@@ -190,73 +197,79 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: authState.isLoading ? null : () async {
-                if (_nameController.text.trim().isEmpty ||
-                    _emailController.text.trim().isEmpty ||
-                    _passwordController.text.trim().isEmpty ||
-                    _confirmPasswordController.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please fill in all fields'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-                
-                if (_passwordController.text != _confirmPasswordController.text) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Passwords do not match'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-                
-                if (_passwordController.text.length < 6) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Password must be at least 6 characters'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-                
-                final success = await authNotifier.signUp(
-                  _emailController.text.trim(),
-                  _passwordController.text,
-                  _nameController.text.trim(),
-                );
-                
-                if (success && mounted) {
-                  // Sign out the user immediately to force login
-                  await authNotifier.signOut();
-                  
-                  // Show success message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Account created successfully! Please sign in with your credentials.'),
-                      backgroundColor: Colors.green,
-                      duration: Duration(seconds: 3),
-                    ),
-                  );
-                  
-                  // Clear the form
-                  _nameController.clear();
-                  _emailController.clear();
-                  _passwordController.clear();
-                  _confirmPasswordController.clear();
-                  
-                  // Navigate to login screen after a short delay
-                  Future.delayed(const Duration(milliseconds: 1500), () {
-                    if (mounted) {
-                      Navigator.of(context).pushReplacementNamed('/login');
-                    }
-                  });
-                }
-              },
+              onPressed: authState.isLoading
+                  ? null
+                  : () async {
+                      if (_nameController.text.trim().isEmpty ||
+                          _emailController.text.trim().isEmpty ||
+                          _passwordController.text.trim().isEmpty ||
+                          _confirmPasswordController.text.trim().isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in all fields'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (_passwordController.text !=
+                          _confirmPasswordController.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Passwords do not match'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (_passwordController.text.length < 6) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content:
+                                Text('Password must be at least 6 characters'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      final success = await authNotifier.signUp(
+                        _emailController.text.trim(),
+                        _passwordController.text,
+                        _nameController.text.trim(),
+                      );
+
+                      if (success && mounted) {
+                        // Sign out the user immediately to force login
+                        await authNotifier.signOut();
+
+                        // Show success message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Account created successfully! Please sign in with your credentials.'),
+                            backgroundColor: Colors.green,
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+
+                        // Clear the form
+                        _nameController.clear();
+                        _emailController.clear();
+                        _passwordController.clear();
+                        _confirmPasswordController.clear();
+
+                        // Navigate to login screen after a short delay
+                        Future.delayed(const Duration(milliseconds: 1500), () {
+                          if (mounted) {
+                            Navigator.of(context)
+                                .pushReplacementNamed('/login');
+                          }
+                        });
+                      }
+                    },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
