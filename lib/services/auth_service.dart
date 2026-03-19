@@ -9,10 +9,8 @@ class AuthService {
   // Get current user
   auth.User? get currentUser => _auth.currentUser;
 
-  // Auth state changes stream
   Stream<auth.User?> get authStateChanges => _auth.authStateChanges();
 
-  // Sign up with email and password
   Future<auth.UserCredential?> signUpWithEmailAndPassword(
     String email,
     String password,
@@ -24,7 +22,7 @@ class AuthService {
         password: password,
       );
 
-      // Create user document in Firestore (non-blocking)
+      // Create user document in Firestore
       _createUserDocumentAsync(result.user!.uid, email, name);
 
       return result;
@@ -79,7 +77,6 @@ class AuthService {
         password: password,
       );
 
-      // Update last login
       _updateLastLoginAsync(result.user!.uid, email);
 
       return result;
@@ -91,7 +88,6 @@ class AuthService {
     }
   }
 
-  // Update last login asynchronously without blocking sign in
   Future<void> _updateLastLoginAsync(String uid, String email) async {
     try {
       auth.User? currentUser = _auth.currentUser;
@@ -144,7 +140,6 @@ class AuthService {
         print(
             'AuthService: Update last login failed, attempting to create document - $e');
       try {
-        // If update fails, create the document with merge option
         await _firestore.collection('users').doc(uid).set({
           'uid': uid,
           'email': email,
@@ -166,6 +161,73 @@ class AuthService {
         if (kDebugMode)
           print('AuthService: Failed to create user document - $createError');
       }
+    }
+  }
+
+  // Sign out
+  Future<void> signOut() async {
+    try {
+      final auth.User? currentUser = _auth.currentUser;
+
+      if (currentUser != null) {
+        await _updateLastLogoutAsync(currentUser.uid);
+      }
+
+      // Sign out from Firebase Auth
+      await _auth.signOut();
+
+      if (kDebugMode) print('AuthService: Sign out completed successfully');
+    } catch (e) {
+      if (kDebugMode) print('AuthService: Sign out error - $e');
+      throw 'Error signing out: ${e.toString()}';
+    }
+  }
+
+  // Update last logout time in Firestore
+  Future<void> _updateLastLogoutAsync(String uid) async {
+    try {
+      await _firestore.collection('users').doc(uid).update({
+        'lastLogout': Timestamp.now(),
+        'isOnline': false,
+      });
+      if (kDebugMode)
+        print('AuthService: Updated last logout time for user: $uid');
+    } on FirebaseException catch (e) {
+      if (e.code == 'permission-denied') {
+        if (kDebugMode)
+          print(
+              'AuthService: Permission denied for logout update - check Firestore security rules');
+      } else if (e.code == 'not-found') {
+        if (kDebugMode)
+          print('AuthService: User document not found for logout update');
+      } else {
+        if (kDebugMode)
+          print('AuthService: Firebase error updating logout - $e');
+      }
+    } catch (e) {
+      if (kDebugMode) print('AuthService: Failed to update logout time - $e');
+    }
+  }
+
+  // Reset password
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } on auth.FirebaseAuthException catch (e) {
+      throw _getErrorMessage(e);
+    } catch (e) {
+      if (kDebugMode) print('AuthService: Reset password error - $e');
+      throw 'Reset password failed: ${e.toString()}';
+    }
+  }
+
+  // Get user data from Firestore
+  Future<DocumentSnapshot> getUserData(String uid) async {
+    try {
+      return await _firestore.collection('users').doc(uid).get();
+    } catch (e) {
+      if (kDebugMode) print('AuthService: Get user data error - $e');
+      throw 'Error fetching user data: ${e.toString()}';
     }
   }
 
