@@ -9,8 +9,9 @@ class AuthState {
   final bool isLoading;
   final bool isInitialized;
   final String? errorMessage;
-  final int stateVersion;
-  final DateTime timestamp;
+  final int stateVersion; // Add version to force rebuilds
+  final DateTime timestamp; // Add timestamp to force rebuilds
+
   AuthState({
     this.user,
     this.isLoading = false,
@@ -22,9 +23,7 @@ class AuthState {
 
   bool get isAuthenticated {
     final result = user != null;
-    if (kDebugMode) {
-      print('AuthState: isAuthenticated getter - user: $user, result: $result');
-    }
+    if (kDebugMode) print('AuthState: isAuthenticated getter - user: $user, result: $result');
     return result;
   }
 
@@ -83,21 +82,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
     super.dispose();
   }
 
-  // Initialize authentication and listen to state changes
+  /// Initialize authentication and listen to state changes
   Future<void> _initialize() async {
     try {
       if (kDebugMode) print('AuthNotifier: Starting initialization...');
-
+      
+      // Listen to auth state changes - this will handle initial state and all subsequent changes
       _authSubscription = _authService.authStateChanges.listen(
         (auth.User? user) {
-          if (kDebugMode) {
-            print('AuthNotifier: Auth state changed - $user');
-          }
-          if (kDebugMode) {
-            print(
-                'AuthNotifier: Current state before update - user: ${state.user}, isInitialized: ${state.isInitialized}');
-          }
-
+          if (kDebugMode) print('AuthNotifier: Auth state changed - $user');
+          if (kDebugMode) print('AuthNotifier: Current state before update - user: ${state.user}, isInitialized: ${state.isInitialized}');
+          
           // Simple state update
           final newState = AuthState(
             user: user,
@@ -107,19 +102,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
             stateVersion: state.stateVersion + 1,
             timestamp: DateTime.now(),
           );
-
-          if (kDebugMode) {
-            print(
-                'AuthNotifier: Setting new state - user: ${newState.user}, isAuthenticated: ${newState.isAuthenticated}, version: ${newState.stateVersion}');
-          }
-
+          
+          if (kDebugMode) print('AuthNotifier: Setting new state - user: ${newState.user}, isAuthenticated: ${newState.isAuthenticated}, version: ${newState.stateVersion}');
+          
           // Single state update
           state = newState;
-
-          if (kDebugMode) {
-            print(
-                'AuthNotifier: State after update - user: ${state.user}, isAuthenticated: ${state.isAuthenticated}');
-          }
+          
+          if (kDebugMode) print('AuthNotifier: State after update - user: ${state.user}, isAuthenticated: ${state.isAuthenticated}');
         },
         onDone: () {
           if (kDebugMode) print('AuthNotifier: Auth stream completed');
@@ -135,7 +124,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           );
         },
       );
-
+      
       if (kDebugMode) print('AuthNotifier: Initialization complete');
     } catch (e) {
       if (kDebugMode) print('AuthNotifier: Initialization error - $e');
@@ -146,28 +135,29 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Sign up with email and password
+  /// Sign up with email and password
   Future<bool> signUp(String email, String password, String name) async {
     await prepareForNewUser();
     state = state.copyWith(isLoading: true, errorMessage: null);
-
+    
     try {
       final result = await _authService.signUpWithEmailAndPassword(
         email,
         password,
         name,
       );
-
+      
       if (result != null) {
-        if (kDebugMode) {
-          print('AuthNotifier: Sign up successful');
-        }
-
+        if (kDebugMode) print('AuthNotifier: Sign up successful');
+        
+        // Don't sign out automatically - let the user stay signed in
+        // The signup screen will handle navigation to login screen if needed
+        
         state = state.copyWith(isLoading: false);
-
+        
         return true;
       }
-
+      
       state = state.copyWith(
         isLoading: false,
         errorMessage: 'Sign up failed',
@@ -187,19 +177,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<bool> signIn(String email, String password) async {
     await prepareForNewUser();
     state = state.copyWith(isLoading: true, errorMessage: null);
-
+    
     try {
       final result = await _authService.signInWithEmailAndPassword(
         email,
         password,
       );
-
+      
       if (result != null) {
         state = state.copyWith(isLoading: false);
-
+        
         return true;
       }
-
+      
       state = state.copyWith(
         isLoading: false,
         errorMessage: 'Sign in failed',
@@ -217,16 +207,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Sign out
   Future<bool> signOut() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-
+    
     try {
       await _authService.signOut();
-      if (kDebugMode)
-        print(
-            'AuthNotifier: Sign out successful, stream will handle state update');
-
-      // Give the auth a moment to process the sign-out
+      if (kDebugMode) print('AuthNotifier: Sign out successful, stream will handle state update');
+      
+      // Give the auth stream a moment to process the sign-out
       await Future.delayed(const Duration(milliseconds: 200));
-
+      
       state = state.copyWith(isLoading: false);
       return true;
     } catch (e) {
@@ -242,13 +230,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Reset password
   Future<bool> resetPassword(String email) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-
+    
     try {
       await _authService.resetPassword(email);
       state = state.copyWith(isLoading: false);
-      if (kDebugMode) {
-        print('AuthNotifier: Password reset email sent');
-      }
+      if (kDebugMode) print('AuthNotifier: Password reset email sent');
       return true;
     } catch (e) {
       if (kDebugMode) print('AuthNotifier: Reset password error - $e');
@@ -263,13 +249,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Update user profile
   Future<bool> updateProfile(String name) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-
+    
     try {
       await _authService.updateProfile(name);
       state = state.copyWith(isLoading: false);
-      if (kDebugMode) {
-        print('AuthNotifier: Profile updated');
-      }
+      if (kDebugMode) print('AuthNotifier: Profile updated');
       return true;
     } catch (e) {
       if (kDebugMode) print('AuthNotifier: Update profile error - $e');
@@ -281,17 +265,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Clear error message
+  /// Clear error message
   void clearError() {
     state = state.copyWith(errorMessage: null);
   }
 
-  // Force refresh auth state
+  /// Force refresh auth state (for debugging)
   void forceRefreshAuthState() {
     final auth.User? currentUser = _authService.currentUser;
-    if (kDebugMode)
-      print('AuthNotifier: Force refresh - current user: $currentUser');
-
+    if (kDebugMode) print('AuthNotifier: Force refresh - current user: $currentUser');
+    
     // Create a completely new state to force UI update
     final newState = AuthState(
       user: currentUser,
@@ -299,15 +282,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
       isInitialized: true,
       errorMessage: null,
       stateVersion: (state.stateVersion + 1) % 1000000,
-      timestamp: DateTime.now(),
+      timestamp: DateTime.now(), // New timestamp to force rebuild
     );
-
-    if (kDebugMode)
-      print(
-          'AuthNotifier: Force refresh - setting state version: ${newState.stateVersion}');
-
+    
+    if (kDebugMode) print('AuthNotifier: Force refresh - setting state version: ${newState.stateVersion}');
+    
     state = newState;
-
+    
     // Force another update after delay
     Future.microtask(() {
       state = newState;
@@ -317,14 +298,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Clear auth state and force user to login again
   Future<void> clearAuthState() async {
     try {
-      if (kDebugMode)
-        print('AuthNotifier: Clearing auth state and forcing login');
+      if (kDebugMode) print('AuthNotifier: Clearing auth state and forcing login');
       await _authService.signOut();
+      // State will be updated by the stream listener
     } catch (e) {
-      if (kDebugMode) {
-        print('AuthNotifier: Error clearing auth state - $e');
-      }
-
+      if (kDebugMode) print('AuthNotifier: Error clearing auth state - $e');
+      // Force clear the state even if sign out fails
       state = AuthState(
         user: null,
         isLoading: false,
@@ -334,8 +313,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Prepare for new user login
+  /// Prepare for new user login (clears current state cleanly)
   Future<void> prepareForNewUser() async {
+    // Clear any existing error messages and loading states
     state = state.copyWith(
       errorMessage: null,
       isLoading: false,

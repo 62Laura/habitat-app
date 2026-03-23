@@ -1,6 +1,8 @@
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/auth_provider_provider.dart';
 import '../../theme/app_theme.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -10,8 +12,7 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen>
-    with TickerProviderStateMixin {
+class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _logoAnimation;
   late Animation<double> _titleAnimation;
@@ -73,7 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final authNotifier = ref.read(authProvider.notifier);
-
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Habitat App'),
@@ -127,14 +128,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        'Sign in to continue tracking your habits',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        Text(
+                          'Sign in to continue tracking your habits',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
                       const SizedBox(height: 40),
                     ],
                   ),
@@ -147,35 +148,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .error
-                            .withOpacity(0.1),
-                        border: Border.all(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .error
-                                .withOpacity(0.2)),
+                        color: Theme.of(context).colorScheme.error.withOpacity(0.1),
+                        border: Border.all(color: Theme.of(context).colorScheme.error.withOpacity(0.2)),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.error,
-                              color: Theme.of(context).colorScheme.error,
-                              size: 20),
+                          Icon(Icons.error, color: Theme.of(context).colorScheme.error, size: 20),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               authState.errorMessage!,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.error,
-                                  fontSize: 14),
+                              style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 14),
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.close,
-                                color: Theme.of(context).colorScheme.error,
-                                size: 20),
+                            icon: Icon(Icons.close, color: Theme.of(context).colorScheme.error, size: 20),
                             onPressed: () {
                               authNotifier.clearError();
                             },
@@ -232,43 +220,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: authState.isLoading
-                              ? null
-                              : () async {
-                                  final currentContext = context;
-                                  if (_emailController.text.trim().isEmpty) {
-                                    if (mounted) {
-                                      ScaffoldMessenger.of(currentContext)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                              'Please enter your email address'),
-                                          backgroundColor:
-                                              Theme.of(currentContext)
-                                                  .colorScheme
-                                                  .error,
-                                        ),
-                                      );
-                                    }
-                                    return;
-                                  }
-
-                                  final success =
-                                      await authNotifier.resetPassword(
-                                    _emailController.text.trim(),
-                                  );
-
-                                  if (success && mounted) {
-                                    ScaffoldMessenger.of(currentContext)
-                                        .showSnackBar(
-                                      SnackBar(
-                                        content:
-                                            Text('Password reset email sent!'),
-                                        backgroundColor: AppTheme.success,
-                                      ),
-                                    );
-                                  }
-                                },
+                          onPressed: authState.isLoading ? null : () async {
+                            final currentContext = context;
+                            if (_emailController.text.trim().isEmpty) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(currentContext).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Please enter your email address'),
+                                    backgroundColor: Theme.of(currentContext).colorScheme.error,
+                                  ),
+                                );
+                              }
+                              return;
+                            }
+                            
+                            final success = await authNotifier.resetPassword(
+                              _emailController.text.trim(),
+                            );
+                            
+                            if (success && mounted) {
+                              ScaffoldMessenger.of(currentContext).showSnackBar(
+                                SnackBar(
+                                  content: Text('Password reset email sent!'),
+                                  backgroundColor: AppTheme.success,
+                                ),
+                              );
+                            }
+                          },
                           child: const Text('Forgot Password?'),
                         ),
                       ),
@@ -284,32 +262,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: authState.isLoading
-                              ? null
-                              : () async {
-                                  if (_emailController.text.trim().isEmpty ||
-                                      _passwordController.text.trim().isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content:
-                                            Text('Please fill in all fields'),
-                                        backgroundColor:
-                                            Theme.of(context).colorScheme.error,
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  final success = await authNotifier.signIn(
-                                    _emailController.text.trim(),
-                                    _passwordController.text,
-                                  );
-
-                                  if (success && mounted) {
-                                    _emailController.clear();
-                                    _passwordController.clear();
-                                  }
-                                },
+                          onPressed: authState.isLoading ? null : () async {
+                            if (_emailController.text.trim().isEmpty || 
+                                _passwordController.text.trim().isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Please fill in all fields'),
+                                  backgroundColor: Theme.of(context).colorScheme.error,
+                                ),
+                              );
+                              return;
+                            }
+                            
+                            final success = await authNotifier.signIn(
+                              _emailController.text.trim(),
+                              _passwordController.text,
+                            );
+                            
+                            if (success && mounted) {
+                              _emailController.clear();
+                              _passwordController.clear();
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
@@ -319,14 +293,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   width: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                   ),
                                 )
                               : const Text(
                                   'Sign In',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
+                                  style: TextStyle(fontSize: 16, color: Colors.white),
                                 ),
                         ),
                       ),
@@ -337,8 +309,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           const Text("Don't have an account? "),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushReplacementNamed('/signup');
+                              Navigator.of(context).pushReplacementNamed('/signup');
                             },
                             child: const Text('Sign Up'),
                           ),
