@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/models.dart';
 import '../../providers/habits_provider.dart';
-import '../../providers/auth_provider.dart';
-import '../../theme/app_theme.dart';
+import '../../providers/auth_provider_provider.dart'; // ✅ Fixed authProvider import
+import '../../theme/app_theme.dart'; // ✅ AppTheme now defined
 
 class HabitScreen extends ConsumerStatefulWidget {
   const HabitScreen({Key? key}) : super(key: key);

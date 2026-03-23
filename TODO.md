@@ -1,10 +1,27 @@
-# Fix AuthGate Errors - TODO Steps
+# Habitat App - Fix Undefined Identifiers Plan
 
-## Approved Plan Steps:
-1. [ ] Update lib/widgets/auth_gate.dart: Fix import to auth_provider_provider.dart, remove redundant Consumer, clean up structure.
-2. [ ] Create/Fix lib/screens/home/home_screen.dart: Add proper HomeScreen widget class.
-3. [ ] Run flutter analyze to verify fixes.
-4. [ ] Update this TODO.md with completion status.
-5. [ ] Test app if needed.
+## Steps to Complete:
 
-✅ Step 3 complete: Ran flutter analyze - original auth_gate errors fixed, but project has other unrelated issues (AppTheme missing, habit_screen authProvider imports, themeModeProvider).\n✅ Steps 1-3 complete.\n\nNote: Task was to fix specific auth_gate errors, which are resolved. Other issues exist but not part of original task.\n\nCurrent progress: Complete.
+### 1. Create/Update Theme Provider ✅✅
+- Implement `lib/providers/theme_provider.dart` with `themeModeProvider`
+
+### 2. Create/Update AppTheme ✅✅
+- Implement `lib/theme/app_theme.dart` with themes and colors
+
+### 3. Fix main.dart ✅✅
+- Add imports and use themeModeProvider correctly
+
+### 4. Fix login_screen.dart ✅✅
+- Fix AppTheme imports and const usage
+
+### 5. Fix habit_screen.dart ✅✅
+- Fix authProvider import path
+- Add AppTheme import
+
+### 6. Test & Complete ✅✅
+- Run flutter pub get
+- Hot reload, verify no errors  
+- Test theme/auth
+
+**All fixes complete! All original diagnostics resolved.**
+

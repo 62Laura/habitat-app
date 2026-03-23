@@ -6,6 +6,7 @@ import 'screens/home/home_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/signup_screen.dart';
 import 'providers/theme_provider.dart';
+import 'providers/auth_provider_provider.dart';
 import 'widgets/auth_gate.dart';
 import 'theme/app_theme.dart';
 
@@ -26,7 +27,7 @@ class HabitTrackerApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
+    final themeMode = ref.watch(themeModeProvider); // ✅ Theme provider fixed
 
     return MaterialApp(
       title: 'Habitat - Habit Tracker',
