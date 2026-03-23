@@ -1,5 +1,3 @@
-// ignore_for_file: curly_braces_in_flow_control_structures
-
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -11,8 +9,10 @@ class AuthService {
   // Get current user
   auth.User? get currentUser => _auth.currentUser;
 
+  // Auth state changes stream
   Stream<auth.User?> get authStateChanges => _auth.authStateChanges();
 
+  // Sign up with email and password
   Future<auth.UserCredential?> signUpWithEmailAndPassword(
     String email,
     String password,
@@ -24,7 +24,7 @@ class AuthService {
         password: password,
       );
 
-      // Create user document in Firestore
+      // Create user document in Firestore (non-blocking)
       _createUserDocumentAsync(result.user!.uid, email, name);
 
       return result;
@@ -37,16 +37,15 @@ class AuthService {
   }
 
   // Create user document asynchronously without blocking sign up
-  Future<void> _createUserDocumentAsync(
-      String uid, String email, String name) async {
+  Future<void> _createUserDocumentAsync(String uid, String email, String name) async {
     try {
+      // Check if user is authenticated
       auth.User? currentUser = _auth.currentUser;
       if (currentUser == null || currentUser.uid != uid) {
-        if (kDebugMode)
-          print('AuthService: User not authenticated or UID mismatch');
+        if (kDebugMode) print('AuthService: User not authenticated or UID mismatch');
         return;
       }
-
+      
       await _firestore.collection('users').doc(uid).set({
         'uid': uid,
         'email': email,
@@ -57,13 +56,12 @@ class AuthService {
       if (kDebugMode) print('AuthService: User document created in Firestore');
     } on FirebaseException catch (e) {
       if (e.code == 'permission-denied') {
-        if (kDebugMode)
-          print(
-              'AuthService: Permission denied - check Firestore security rules');
+        if (kDebugMode) print('AuthService: Permission denied - check Firestore security rules');
       } else {
         if (kDebugMode) print('AuthService: Firebase error - $e');
       }
     } catch (e) {
+      // Log but don't throw - Firestore creation is not critical
       if (kDebugMode) print('AuthService: Failed to create user document - $e');
     }
   }
@@ -79,6 +77,7 @@ class AuthService {
         password: password,
       );
 
+      // Update last login (non-blocking - don't fail if this fails)
       _updateLastLoginAsync(result.user!.uid, email);
 
       return result;
@@ -90,78 +89,62 @@ class AuthService {
     }
   }
 
+  // Update last login asynchronously without blocking sign in
   Future<void> _updateLastLoginAsync(String uid, String email) async {
     try {
+      // Check if user is authenticated
       auth.User? currentUser = _auth.currentUser;
       if (currentUser == null || currentUser.uid != uid) {
-        if (kDebugMode)
-          print(
-              'AuthService: User not authenticated or UID mismatch for login update');
+        if (kDebugMode) print('AuthService: User not authenticated or UID mismatch for login update');
         return;
       }
-
+      
       // First try to update existing document
       await _firestore.collection('users').doc(uid).update({
         'lastLogin': Timestamp.now(),
       });
     } on FirebaseException catch (e) {
       if (e.code == 'permission-denied') {
-        if (kDebugMode)
-          print(
-              'AuthService: Permission denied for login update - check Firestore security rules');
+        if (kDebugMode) print('AuthService: Permission denied for login update - check Firestore security rules');
       } else if (e.code == 'not-found') {
         // Document doesn't exist, try to create it
-        if (kDebugMode)
-          print(
-              'AuthService: Update last login failed, attempting to create document - $e');
+        if (kDebugMode) print('AuthService: Update last login failed, attempting to create document - $e');
         try {
           await _firestore.collection('users').doc(uid).set({
             'uid': uid,
             'email': email,
             'lastLogin': Timestamp.now(),
           }, SetOptions(merge: true));
-          if (kDebugMode)
-            print('AuthService: User document created in Firestore');
+          if (kDebugMode) print('AuthService: User document created in Firestore');
         } on FirebaseException catch (createError) {
           if (createError.code == 'permission-denied') {
-            if (kDebugMode)
-              print(
-                  'AuthService: Permission denied for document creation - check Firestore security rules');
+            if (kDebugMode) print('AuthService: Permission denied for document creation - check Firestore security rules');
           } else {
-            if (kDebugMode)
-              print(
-                  'AuthService: Firebase error creating document - $createError');
+            if (kDebugMode) print('AuthService: Firebase error creating document - $createError');
           }
         }
       } else {
-        if (kDebugMode)
-          print('AuthService: Firebase error updating login - $e');
+        if (kDebugMode) print('AuthService: Firebase error updating login - $e');
       }
     } catch (e) {
-      if (kDebugMode)
-        print(
-            'AuthService: Update last login failed, attempting to create document - $e');
+      if (kDebugMode) print('AuthService: Update last login failed, attempting to create document - $e');
       try {
+        // If update fails, create the document with merge option
         await _firestore.collection('users').doc(uid).set({
           'uid': uid,
           'email': email,
           'lastLogin': Timestamp.now(),
         }, SetOptions(merge: true));
-        if (kDebugMode)
-          print('AuthService: User document created in Firestore');
+        if (kDebugMode) print('AuthService: User document created in Firestore');
       } on FirebaseException catch (createError) {
         if (createError.code == 'permission-denied') {
-          if (kDebugMode)
-            print(
-                'AuthService: Permission denied for document creation - check Firestore security rules');
+          if (kDebugMode) print('AuthService: Permission denied for document creation - check Firestore security rules');
         } else {
-          if (kDebugMode)
-            print(
-                'AuthService: Firebase error creating document - $createError');
+          if (kDebugMode) print('AuthService: Firebase error creating document - $createError');
         }
       } catch (createError) {
-        if (kDebugMode)
-          print('AuthService: Failed to create user document - $createError');
+        // Log but don't throw - Firestore updates are not critical to sign in
+        if (kDebugMode) print('AuthService: Failed to create user document - $createError');
       }
     }
   }
@@ -170,14 +153,15 @@ class AuthService {
   Future<void> signOut() async {
     try {
       final auth.User? currentUser = _auth.currentUser;
-
+      
+      // Update user's last session in Firestore before signing out
       if (currentUser != null) {
         await _updateLastLogoutAsync(currentUser.uid);
       }
-
+      
       // Sign out from Firebase Auth
       await _auth.signOut();
-
+      
       if (kDebugMode) print('AuthService: Sign out completed successfully');
     } catch (e) {
       if (kDebugMode) print('AuthService: Sign out error - $e');
@@ -192,21 +176,17 @@ class AuthService {
         'lastLogout': Timestamp.now(),
         'isOnline': false,
       });
-      if (kDebugMode)
-        print('AuthService: Updated last logout time for user: $uid');
+      if (kDebugMode) print('AuthService: Updated last logout time for user: $uid');
     } on FirebaseException catch (e) {
       if (e.code == 'permission-denied') {
-        if (kDebugMode)
-          print(
-              'AuthService: Permission denied for logout update - check Firestore security rules');
+        if (kDebugMode) print('AuthService: Permission denied for logout update - check Firestore security rules');
       } else if (e.code == 'not-found') {
-        if (kDebugMode)
-          print('AuthService: User document not found for logout update');
+        if (kDebugMode) print('AuthService: User document not found for logout update');
       } else {
-        if (kDebugMode)
-          print('AuthService: Firebase error updating logout - $e');
+        if (kDebugMode) print('AuthService: Firebase error updating logout - $e');
       }
     } catch (e) {
+      // Log but don't throw - logout update is not critical to sign out
       if (kDebugMode) print('AuthService: Failed to update logout time - $e');
     }
   }
@@ -272,4 +252,3 @@ class AuthService {
     }
   }
 }
-

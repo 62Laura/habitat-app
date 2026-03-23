@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/auth_provider_provider.dart';
-import '../../theme/app_theme.dart'; // ✅ AppTheme now defined
+import '../../theme/app_theme.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -242,7 +242,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                               ScaffoldMessenger.of(currentContext).showSnackBar(
                                 SnackBar(
                                   content: Text('Password reset email sent!'),
-                          backgroundColor: AppTheme.success, // ✅ Fixed const usage
+                                  backgroundColor: AppTheme.success,
                                 ),
                               );
                             }
