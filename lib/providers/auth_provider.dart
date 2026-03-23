@@ -22,8 +22,9 @@ class AuthState {
 
   bool get isAuthenticated {
     final result = user != null;
-    if (kDebugMode)
+    if (kDebugMode) {
       print('AuthState: isAuthenticated getter - user: $user, result: $result');
+    }
     return result;
   }
 
@@ -89,10 +90,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       _authSubscription = _authService.authStateChanges.listen(
         (auth.User? user) {
-          if (kDebugMode) print('AuthNotifier: Auth state changed - $user');
-          if (kDebugMode)
+          if (kDebugMode) {
+            print('AuthNotifier: Auth state changed - $user');
+          }
+          if (kDebugMode) {
             print(
                 'AuthNotifier: Current state before update - user: ${state.user}, isInitialized: ${state.isInitialized}');
+          }
 
           // Simple state update
           final newState = AuthState(
@@ -104,16 +108,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
             timestamp: DateTime.now(),
           );
 
-          if (kDebugMode)
+          if (kDebugMode) {
             print(
                 'AuthNotifier: Setting new state - user: ${newState.user}, isAuthenticated: ${newState.isAuthenticated}, version: ${newState.stateVersion}');
+          }
 
           // Single state update
           state = newState;
 
-          if (kDebugMode)
+          if (kDebugMode) {
             print(
                 'AuthNotifier: State after update - user: ${state.user}, isAuthenticated: ${state.isAuthenticated}');
+          }
         },
         onDone: () {
           if (kDebugMode) print('AuthNotifier: Auth stream completed');
@@ -153,7 +159,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       if (result != null) {
-        if (kDebugMode) print('AuthNotifier: Sign up successful');
+        if (kDebugMode) {
+          print('AuthNotifier: Sign up successful');
+        }
 
         state = state.copyWith(isLoading: false);
 
@@ -238,7 +246,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       await _authService.resetPassword(email);
       state = state.copyWith(isLoading: false);
-      if (kDebugMode) print('AuthNotifier: Password reset email sent');
+      if (kDebugMode) {
+        print('AuthNotifier: Password reset email sent');
+      }
       return true;
     } catch (e) {
       if (kDebugMode) print('AuthNotifier: Reset password error - $e');
@@ -257,7 +267,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       await _authService.updateProfile(name);
       state = state.copyWith(isLoading: false);
-      if (kDebugMode) print('AuthNotifier: Profile updated');
+      if (kDebugMode) {
+        print('AuthNotifier: Profile updated');
+      }
       return true;
     } catch (e) {
       if (kDebugMode) print('AuthNotifier: Update profile error - $e');
@@ -309,7 +321,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
         print('AuthNotifier: Clearing auth state and forcing login');
       await _authService.signOut();
     } catch (e) {
-      if (kDebugMode) print('AuthNotifier: Error clearing auth state - $e');
+      if (kDebugMode) {
+        print('AuthNotifier: Error clearing auth state - $e');
+      }
 
       state = AuthState(
         user: null,
