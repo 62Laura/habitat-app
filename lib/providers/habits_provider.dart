@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/models.dart';
 import '../services/habit_service.dart';
-import 'auth_provider_provider.dart';
+import 'auth_provider.dart';
 
 // Habits state
 class HabitsState {
