@@ -1,9 +1,11 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/auth_provider_provider.dart';
-// import '../../theme/app_theme.dart';
-// import '../habit/habit_screen.dart';
-// TODO: import other providers/screens as needed
+ 
+
+
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -81,8 +83,6 @@ class HomeScreen extends ConsumerWidget {
               title: const Text('Habits'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Navigate to habit screen
-                // Navigator.push(context, MaterialPageRoute(builder: (_) => HabitScreen()));
               },
             ),
             ListTile(
@@ -90,7 +90,7 @@ class HomeScreen extends ConsumerWidget {
               title: const Text('Goals'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Navigate to goals
+                
               },
             ),
             ListTile(
@@ -98,7 +98,7 @@ class HomeScreen extends ConsumerWidget {
               title: const Text('Settings'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Navigate to settings
+             
               },
             ),
           ],
