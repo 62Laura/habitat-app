@@ -85,23 +85,5 @@ flutter run
 - [ ] Add screenshots to README
 - [ ] Fix minor linter warnings (withOpacity, const prefs)
 
-## 🤝 Contributing
-
-1. Fork & clone
-2. `cd habita_app && flutter pub get`
-3. Create feature branch
-4. PR to `main`
-
-See TODOs in `habita_app/TODO.md`
-
-## 📄 License
-
-MIT License.
-
-## 👥 Acknowledgments
-
-Built by ALU students. Props to Flutter & Firebase communities.
-
----
 
 *\"Small daily improvements create outstanding results\" - Habit Tracker Wisdom*
