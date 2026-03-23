@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,7 +8,6 @@ import 'screens/home/home_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/signup_screen.dart';
 import 'providers/theme_provider.dart';
-
 import 'widgets/auth_gate.dart';
 import 'theme/app_theme.dart';
 
@@ -27,7 +28,7 @@ class HabitTrackerApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider); // ✅ Theme provider fixed
+    final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
       title: 'Habitat - Habit Tracker',
