@@ -126,7 +126,7 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
     state = state.copyWith(selectedFilter: filter);
   }
 
-  Future<void> addGoal(String title, String description, double target, String action) async {
+  Future<void> addGoal(String title, String description, double target, String action, String frequency) async {
     state = state.copyWith(isLoading: true, error: null);
     
     try {
@@ -135,10 +135,13 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
         description: description,
         targetProgress: target,
         action: action,
+        frequency: frequency,
       );
       
       if (kDebugMode) print('GoalsNotifier: Goal added successfully');
-      // The stream will automatically update the state
+      // Refresh goals to get the newly added goal
+      await Future.delayed(const Duration(milliseconds: 500));
+      await refreshGoals();
     } catch (e) {
       if (kDebugMode) print('GoalsNotifier: Failed to add goal - $e');
       state = state.copyWith(
@@ -148,7 +151,7 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
     }
   }
 
-  Future<void> updateGoal(String id, String title, String description, double target, String action) async {
+  Future<void> updateGoal(String id, String title, String description, double target, String action, String frequency) async {
     state = state.copyWith(isLoading: true, error: null);
     
     try {
@@ -158,10 +161,13 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
         description: description,
         targetProgress: target,
         action: action,
+        frequency: frequency,
       );
       
       if (kDebugMode) print('GoalsNotifier: Goal $id updated successfully');
-      // The stream will automatically update the state
+      // Refresh goals to get the updated goal
+      await Future.delayed(const Duration(milliseconds: 500));
+      await refreshGoals();
     } catch (e) {
       if (kDebugMode) print('GoalsNotifier: Failed to update goal - $e');
       state = state.copyWith(
@@ -178,7 +184,9 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
       await _goalService.deleteGoal(id);
       
       if (kDebugMode) print('GoalsNotifier: Goal $id deleted successfully');
-      // The stream will automatically update the state
+      // Refresh goals to remove the deleted goal
+      await Future.delayed(const Duration(milliseconds: 500));
+      await refreshGoals();
     } catch (e) {
       if (kDebugMode) print('GoalsNotifier: Failed to delete goal - $e');
       state = state.copyWith(
@@ -198,7 +206,9 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
       );
       
       if (kDebugMode) print('GoalsNotifier: Goal progress updated for $id');
-      // The stream will automatically update the state
+      // Refresh goals to get the updated progress
+      await Future.delayed(const Duration(milliseconds: 300));
+      await refreshGoals();
     } catch (e) {
       if (kDebugMode) print('GoalsNotifier: Failed to update goal progress - $e');
       state = state.copyWith(

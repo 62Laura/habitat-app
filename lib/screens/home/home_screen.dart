@@ -302,10 +302,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     habit,
                     isCompleted,
                     (bool? value) {
+                      final newValue = value ?? false;
                       setState(() {
-                        _completedHabitsToday[habit.id] = value ?? false;
+                        _completedHabitsToday[habit.id] = newValue;
                       });
+                      // Calculate new completed days based on checkbox state
+                      final newCompletedDays = newValue 
+                        ? (habit.completedDays + 1).clamp(0, habit.totalDays)
+                        : (habit.completedDays - 1).clamp(0, habit.totalDays);
                       
+                      // Update habit progress via provider for real-time sync
+                      ref.read(habitsProvider.notifier).updateHabitProgress(
+                        habit.id,
+                        newCompletedDays,
+                        ref.read(authProvider).user?.uid ?? '',
+                      );
                     },
                   );
                 }).toList(),
@@ -440,155 +451,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildHabitItem(Habit habit, bool isCompleted, Function(bool?) onChanged) {
     final color = _getColorFromString(habit.color);
+    final frequencyLabel = _getFrequencyLabel(habit.frequency);
     
-    return Container(
-      margin: EdgeInsets.only(bottom: AppTheme.spacing12),
-      padding: EdgeInsets.all(AppTheme.spacing16),
-      decoration: BoxDecoration(
-        color: isCompleted ? color.withValues(alpha: 0.05) : context.surfaceColor,
-        border: Border.all(
-                  color: Theme.of(context).colorScheme.outline,
-          width: isCompleted ? 2 : 1,
-        ),
-        borderRadius: AppTheme.radiusMedium,
-        boxShadow: isCompleted ? AppTheme.shadowSmall : null,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: isCompleted ? color : Colors.transparent,
-              border: Border.all(
-                color: isCompleted ? color : AppTheme.borderMedium,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
+    return Consumer(
+      builder: (context, ref, child) {
+        return Container(
+          margin: EdgeInsets.only(bottom: AppTheme.spacing12),
+          padding: EdgeInsets.all(AppTheme.spacing16),
+          decoration: BoxDecoration(
+            color: isCompleted ? color.withValues(alpha: 0.05) : context.surfaceColor,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: isCompleted ? 2 : 1,
             ),
-            child: isCompleted
-                ? Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 16,
-                  )
-                : null,
+            borderRadius: AppTheme.radiusMedium,
+            boxShadow: isCompleted ? AppTheme.shadowSmall : null,
           ),
-          SizedBox(width: AppTheme.spacing12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  habit.name,
-                  style: AppTheme.bodyLarge.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isCompleted
-                        ? context.textSecondaryColor
-                        : context.textPrimaryColor,
-                    decoration: isCompleted
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                  ),
-                ),
-                if (habit.description.isNotEmpty) ...[
-                  SizedBox(height: AppTheme.spacing4),
-                  Text(
-                    habit.description,
-                    style: AppTheme.bodySmall.copyWith(
-                      color: context.textSecondaryColor,
-                    ),
-                  ),
-                ],
-                SizedBox(height: AppTheme.spacing8),
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacing8,
-                        vertical: AppTheme.spacing2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.1),
-                        borderRadius: AppTheme.radiusSmall,
-                      ),
-                      child: Text(
-                        '${habit.completedDays}/${habit.totalDays} days',
-                        style: AppTheme.caption.copyWith(
-                          color: color,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: AppTheme.spacing8),
-                    Text(
-                      '${((habit.completedDays / habit.totalDays) * 100).toStringAsFixed(0)}%',
-                      style: AppTheme.caption.copyWith(
-                        color: context.textSecondaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: AppTheme.spacing8),
-          GestureDetector(
-            onTap: () => onChanged(!isCompleted),
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: isCompleted ? color : Colors.transparent,
-                border: Border.all(
-                  color: color,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: isCompleted
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 18,
-                    )
-                  : null,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGoalItem(Goal goal) {
-    final color = _getColorFromString(goal.color);
-    final progress = goal.percentage / 100;
-    
-    return Container(
-      margin: EdgeInsets.only(bottom: AppTheme.spacing16),
-      padding: EdgeInsets.all(AppTheme.spacing16),
-      decoration: BoxDecoration(
-        color: context.surfaceColor,
-        borderRadius: AppTheme.radiusMedium,
-        border: Border.all(color: color.withValues(alpha: 0.1)),
-        boxShadow: AppTheme.shadowSmall,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+          child: Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(AppTheme.spacing8),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: AppTheme.radiusSmall,
-                ),
-                child: Icon(
-                  _getIconFromString(goal.icon),
-                  color: color,
-                  size: 20,
+              GestureDetector(
+                onTap: () {
+                  final authState = ref.read(authProvider);
+                  final newCompletedDays = isCompleted
+                      ? habit.completedDays - 1
+                      : habit.completedDays + 1;
+                  
+                  // Update locally
+                  onChanged(!isCompleted);
+                  
+                  // Update in provider and Firestore
+                  if (authState.user != null && newCompletedDays >= 0 && newCompletedDays <= habit.totalDays) {
+                    ref.read(habitsProvider.notifier).updateHabitProgress(
+                      habit.id,
+                      newCompletedDays,
+                      authState.user!.uid,
+                    );
+                  }
+                },
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: isCompleted ? color : Colors.transparent,
+                    border: Border.all(
+                      color: isCompleted ? color : AppTheme.borderMedium,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: isCompleted
+                      ? Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 16,
+                        )
+                      : null,
                 ),
               ),
               SizedBox(width: AppTheme.spacing12),
@@ -597,82 +514,323 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      goal.title,
+                      habit.name,
                       style: AppTheme.bodyLarge.copyWith(
                         fontWeight: FontWeight.w600,
+                        color: isCompleted
+                            ? context.textSecondaryColor
+                            : context.textPrimaryColor,
+                        decoration: isCompleted
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
                       ),
                     ),
-                    if (goal.description.isNotEmpty) ...[
+                    if (habit.description.isNotEmpty) ...[
                       SizedBox(height: AppTheme.spacing4),
                       Text(
-                        goal.description,
+                        habit.description,
                         style: AppTheme.bodySmall.copyWith(
                           color: context.textSecondaryColor,
                         ),
                       ),
                     ],
+                    SizedBox(height: AppTheme.spacing8),
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacing8,
+                            vertical: AppTheme.spacing2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: color.withValues(alpha: 0.1),
+                            borderRadius: AppTheme.radiusSmall,
+                          ),
+                          child: Text(
+                            frequencyLabel,
+                            style: AppTheme.caption.copyWith(
+                              color: color,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: AppTheme.spacing8),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacing8,
+                            vertical: AppTheme.spacing2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: color.withValues(alpha: 0.1),
+                            borderRadius: AppTheme.radiusSmall,
+                          ),
+                          child: Text(
+                            '${habit.completedDays}/${habit.totalDays} days',
+                            style: AppTheme.caption.copyWith(
+                              color: color,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: AppTheme.spacing8),
+                        Text(
+                          '${((habit.completedDays / habit.totalDays) * 100).toStringAsFixed(0)}%',
+                          style: AppTheme.caption.copyWith(
+                            color: context.textSecondaryColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacing8,
-                  vertical: AppTheme.spacing4,
+              SizedBox(width: AppTheme.spacing8),
+              GestureDetector(
+                onTap: () {
+                  final authState = ref.read(authProvider);
+                  final newCompletedDays = isCompleted
+                      ? habit.completedDays - 1
+                      : habit.completedDays + 1;
+                  
+                  // Update locally
+                  onChanged(!isCompleted);
+                  
+                  // Update in provider and Firestore
+                  if (authState.user != null && newCompletedDays >= 0 && newCompletedDays <= habit.totalDays) {
+                    ref.read(habitsProvider.notifier).updateHabitProgress(
+                      habit.id,
+                      newCompletedDays,
+                      authState.user!.uid,
+                    );
+                  }
+                },
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: isCompleted ? color : Colors.transparent,
+                    border: Border.all(
+                      color: color,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: isCompleted
+                      ? Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 18,
+                        )
+                      : null,
                 ),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: AppTheme.radiusSmall,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGoalItem(Goal goal) {
+    final color = _getColorFromString(goal.color);
+    final progress = goal.percentage / 100;
+    final frequencyLabel = _getFrequencyLabel(goal.frequency);
+    
+    return Consumer(
+      builder: (context, ref, child) {
+        return GestureDetector(
+          onTap: () {
+            // Navigate to goal details
+            setState(() {
+              _selectedIndex = 2; // Navigate to goals tab
+            });
+          },
+          child: Container(
+            margin: EdgeInsets.only(bottom: AppTheme.spacing16),
+            padding: EdgeInsets.all(AppTheme.spacing16),
+            decoration: BoxDecoration(
+              color: context.surfaceColor,
+              borderRadius: AppTheme.radiusMedium,
+              border: Border.all(color: color.withValues(alpha: 0.1)),
+              boxShadow: AppTheme.shadowSmall,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(AppTheme.spacing8),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.1),
+                        borderRadius: AppTheme.radiusSmall,
+                      ),
+                      child: Icon(
+                        _getIconFromString(goal.icon),
+                        color: color,
+                        size: 20,
+                      ),
+                    ),
+                    SizedBox(width: AppTheme.spacing12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            goal.title,
+                            style: AppTheme.bodyLarge.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          if (goal.description.isNotEmpty) ...[
+                            SizedBox(height: AppTheme.spacing4),
+                            Text(
+                              goal.description,
+                              style: AppTheme.bodySmall.copyWith(
+                                color: context.textSecondaryColor,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacing8,
+                        vertical: AppTheme.spacing4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.1),
+                        borderRadius: AppTheme.radiusSmall,
+                      ),
+                      child: Text(
+                        '${goal.percentage.toStringAsFixed(0)}%',
+                        style: AppTheme.caption.copyWith(
+                          color: color,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: Text(
-                  '${goal.percentage.toStringAsFixed(0)}%',
-                  style: AppTheme.caption.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w600,
+                SizedBox(height: AppTheme.spacing16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Progress',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: context.textSecondaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      '${goal.currentProgress.toStringAsFixed(1)} / ${goal.targetProgress.toStringAsFixed(1)} ${goal.unit}',
+                      style: AppTheme.bodySmall.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppTheme.spacing8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacing8,
+                        vertical: AppTheme.spacing4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.1),
+                        borderRadius: AppTheme.radiusSmall,
+                      ),
+                      child: Text(
+                        frequencyLabel,
+                        style: AppTheme.caption.copyWith(
+                          color: color,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        TextButton.icon(
+                          onPressed: () {
+                            final newProgress = goal.currentProgress - 1;
+                            if (newProgress >= 0) {
+                              ref.read(goalsProvider.notifier).updateGoalProgress(
+                                goal.id,
+                                newProgress,
+                              );
+                            }
+                          },
+                          icon: Icon(Icons.remove, size: 16),
+                          label: Text(''),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size(36, 36),
+                          ),
+                        ),
+                        TextButton.icon(
+                          onPressed: () {
+                            final newProgress = goal.currentProgress + 1;
+                            if (newProgress <= goal.targetProgress) {
+                              ref.read(goalsProvider.notifier).updateGoalProgress(
+                                goal.id,
+                                newProgress,
+                              );
+                            }
+                          },
+                          icon: Icon(Icons.add, size: 16),
+                          label: Text(''),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size(36, 36),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppTheme.spacing12),
+                Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: AppTheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: FractionallySizedBox(
+                    alignment: Alignment.centerLeft,
+                    widthFactor: progress.clamp(0.0, 1.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: AppTheme.spacing16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Progress',
-                style: AppTheme.bodySmall.copyWith(
-                  color: context.textSecondaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                '${goal.currentProgress.toStringAsFixed(1)} / ${goal.targetProgress.toStringAsFixed(1)} ${goal.unit}',
-                style: AppTheme.bodySmall.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: AppTheme.spacing8),
-          Container(
-            height: 8,
-            decoration: BoxDecoration(
-              color: AppTheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: progress,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  String _getFrequencyLabel(String frequency) {
+    switch (frequency.toLowerCase()) {
+      case 'daily':
+        return 'Daily';
+      case 'weekly':
+        return 'Weekly (7 days)';
+      case 'monthly':
+        return 'Monthly (30 days)';
+      default:
+        return frequency;
+    }
   }
 
   Color _getColorFromString(String colorString) {

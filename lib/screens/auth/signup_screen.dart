@@ -47,7 +47,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Habitat App'),
+        title: const Text('BLOOM'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(

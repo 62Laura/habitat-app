@@ -116,6 +116,8 @@ class HabitsNotifier extends StateNotifier<HabitsState> {
       );
       
       await _habitService.addHabit(newHabit, userId);
+      // Set loading to false after successful add
+      state = state.copyWith(isLoading: false);
       // The stream listener will automatically update the state
     } catch (e) {
       state = state.copyWith(
@@ -143,6 +145,8 @@ class HabitsNotifier extends StateNotifier<HabitsState> {
       );
       
       await _habitService.updateHabit(updatedHabit, userId);
+      // Set loading to false after successful update
+      state = state.copyWith(isLoading: false);
       // The stream listener will automatically update the state
     } catch (e) {
       state = state.copyWith(
@@ -157,6 +161,8 @@ class HabitsNotifier extends StateNotifier<HabitsState> {
     
     try {
       await _habitService.deleteHabit(id, userId);
+      // Set loading to false after successful delete
+      state = state.copyWith(isLoading: false);
       // The stream listener will automatically update the state
     } catch (e) {
       state = state.copyWith(
@@ -171,11 +177,30 @@ class HabitsNotifier extends StateNotifier<HabitsState> {
     
     try {
       await _habitService.markHabitComplete(id, userId);
+      // Set loading to false after successful complete
+      state = state.copyWith(isLoading: false);
       // The stream listener will automatically update the state
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to update habit: $e',
+      );
+    }
+  }
+
+  // Update habit progress directly (for syncing between screens)
+  Future<void> updateHabitProgress(String habitId, int completedDays, String userId) async {
+    state = state.copyWith(isLoading: true);
+    
+    try {
+      await _habitService.updateHabitProgress(habitId, completedDays);
+      // Refresh habits to get the updated progress
+      await Future.delayed(const Duration(milliseconds: 300));
+      startListening(userId);
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to update habit progress: $e',
       );
     }
   }

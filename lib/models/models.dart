@@ -34,6 +34,7 @@ class Goal {
   final String icon;
   final String color;
   final String action; // Steps to achieve goal
+  final String frequency; // daily, weekly, monthly
   final DateTime createdAt;
   final DateTime? dueDate;
 
@@ -47,6 +48,7 @@ class Goal {
     required this.icon,
     required this.color,
     required this.action,
+    required this.frequency,
     required this.createdAt,
     this.dueDate,
   });

@@ -30,7 +30,7 @@ class HabitTrackerApp extends ConsumerWidget {
 
     return MaterialApp(
       title: 'Habitat - Habit Tracker',
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.lightTheme, 
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       home: const AuthGate(),

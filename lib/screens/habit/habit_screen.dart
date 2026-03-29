@@ -149,6 +149,7 @@ class _HabitScreenState extends ConsumerState<HabitScreen> {
   Widget _buildHabitCard(Habit habit) {
     final color = _getColorFromString(habit.color);
     final icon = _getIconFromString(habit.icon);
+    final frequencyLabel = _getFrequencyLabel(habit.frequency);
     
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -216,6 +217,21 @@ class _HabitScreenState extends ConsumerState<HabitScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  frequencyLabel,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
               Text(
                 '${habit.completedDays}/${habit.totalDays} days completed',
                 style: TextStyle(
@@ -246,6 +262,19 @@ class _HabitScreenState extends ConsumerState<HabitScreen> {
         ],
       ),
     );
+  }
+
+  String _getFrequencyLabel(String frequency) {
+    switch (frequency.toLowerCase()) {
+      case 'daily':
+        return 'Daily';
+      case 'weekly':
+        return 'Weekly (7 days)';
+      case 'monthly':
+        return 'Monthly (30 days)';
+      default:
+        return frequency;
+    }
   }
 
   void _showCreateHabitDialog({Habit? habit}) {
@@ -493,14 +522,23 @@ class _CreateHabitFormState extends State<CreateHabitForm> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
-              if (_nameController.text.isNotEmpty && 
-                  _descriptionController.text.isNotEmpty) {
-                widget.onSave(
-                  _nameController.text,
-                  _descriptionController.text,
-                  _selectedFrequency,
+              if (_nameController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a habit name')),
                 );
+                return;
               }
+              if (_descriptionController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a description')),
+                );
+                return;
+              }
+              widget.onSave(
+                _nameController.text,
+                _descriptionController.text,
+                _selectedFrequency,
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,

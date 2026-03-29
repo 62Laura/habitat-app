@@ -34,13 +34,16 @@ class HabitService {
   // Add a new habit
   Future<String> addHabit(Habit habit, String userId) async {
     try {
+      // Calculate totalDays based on frequency
+      final totalDays = _calculateTotalDays(habit.frequency);
+      
       final docRef = await _firestore.collection(_collection).add({
         'userId': userId,
         'name': habit.name,
         'description': habit.description,
         'frequency': habit.frequency,
         'completedDays': habit.completedDays,
-        'totalDays': habit.totalDays,
+        'totalDays': totalDays,
         'icon': habit.icon,
         'color': habit.color,
         'createdAt': Timestamp.fromDate(habit.createdAt),
@@ -55,12 +58,15 @@ class HabitService {
   // Update an existing habit
   Future<void> updateHabit(Habit habit, String userId) async {
     try {
+      // Calculate totalDays based on frequency
+      final totalDays = _calculateTotalDays(habit.frequency);
+      
       await _firestore.collection(_collection).doc(habit.id).update({
         'name': habit.name,
         'description': habit.description,
         'frequency': habit.frequency,
         'completedDays': habit.completedDays,
-        'totalDays': habit.totalDays,
+        'totalDays': totalDays,
         'icon': habit.icon,
         'color': habit.color,
         'updatedAt': Timestamp.now(),
@@ -105,6 +111,32 @@ class HabitService {
       });
     } catch (e) {
       throw Exception('Failed to mark habit complete: $e');
+    }
+  }
+
+  // Update habit progress directly
+  Future<void> updateHabitProgress(String habitId, int completedDays) async {
+    try {
+      await _firestore.collection(_collection).doc(habitId).update({
+        'completedDays': completedDays,
+        'updatedAt': Timestamp.now(),
+      });
+    } catch (e) {
+      throw Exception('Failed to update habit progress: $e');
+    }
+  }
+
+  // Helper method to calculate total days based on frequency
+  int _calculateTotalDays(String frequency) {
+    switch (frequency.toLowerCase()) {
+      case 'daily':
+        return 30; // 30 days for daily habit
+      case 'weekly':
+        return 7; // 7 days for weekly habit
+      case 'monthly':
+        return 30; // 30 days for monthly habit
+      default:
+        return 30;
     }
   }
 

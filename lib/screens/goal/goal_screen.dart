@@ -187,13 +187,14 @@ class _GoalScreenState extends ConsumerState<GoalScreen> {
         title: Text(goal == null ? 'Create Goal' : 'Edit Goal'),
         content: CreateGoalForm(
           goal: goal,
-          onSave: (title, desc, target, action) {
+          onSave: (title, desc, target, action, frequency) {
             if (goal == null) {
               ref.read(goalsProvider.notifier).addGoal(
                     title,
                     desc,
                     target,
                     action,
+                    frequency,
                   );
             } else {
               ref.read(goalsProvider.notifier).updateGoal(
@@ -202,6 +203,7 @@ class _GoalScreenState extends ConsumerState<GoalScreen> {
                     desc,
                     target,
                     action,
+                    frequency,
                   );
             }
           },
@@ -268,7 +270,7 @@ class _GoalScreenState extends ConsumerState<GoalScreen> {
 
 class CreateGoalForm extends StatefulWidget {
   final Goal? goal;
-  final Function(String, String, double, String) onSave;
+  final Function(String, String, double, String, String) onSave;
 
   const CreateGoalForm({
     Key? key,
@@ -285,6 +287,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
   late TextEditingController desc;
   late TextEditingController target;
   late TextEditingController action;
+  late String frequency;
 
   @override
   void initState() {
@@ -294,6 +297,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
     target =
         TextEditingController(text: widget.goal?.targetProgress.toString() ?? '');
     action = TextEditingController(text: widget.goal?.action ?? '');
+    frequency = widget.goal?.frequency ?? 'daily';
   }
 
   @override
@@ -301,22 +305,71 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TextField(controller: title),
+        TextField(
+          controller: title,
+          decoration: InputDecoration(labelText: 'Goal Title'),
+        ),
         const SizedBox(height: 10),
-        TextField(controller: desc),
+        TextField(
+          controller: desc,
+          decoration: InputDecoration(labelText: 'Description'),
+        ),
         const SizedBox(height: 10),
-        TextField(controller: target),
+        TextField(
+          controller: target,
+          decoration: InputDecoration(labelText: 'Target Progress'),
+          keyboardType: TextInputType.number,
+        ),
         const SizedBox(height: 10),
-        TextField(controller: action),
+        TextField(
+          controller: action,
+          decoration: InputDecoration(labelText: 'Action Steps'),
+        ),
         const SizedBox(height: 10),
-
+        DropdownButton<String>(
+          value: frequency,
+          isExpanded: true,
+          // ignore: prefer_const_literals_to_create_immutables
+          items: [
+            DropdownMenuItem(value: 'daily', child: Text('Daily')),
+            DropdownMenuItem(value: 'weekly', child: Text('Weekly (7 days)')),
+            DropdownMenuItem(value: 'monthly', child: Text('Monthly (30 days)')),
+          ],
+          onChanged: (value) {
+            if (value != null) {
+              setState(() {
+                frequency = value;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
-            final t = double.tryParse(target.text) ?? 0;
-            if (t > 0) {
-              widget.onSave(title.text, desc.text, t, action.text);
-              Navigator.pop(context);
+            // Validation
+            if (title.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please enter a goal title')),
+              );
+              return;
             }
+            if (action.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please enter action steps')),
+              );
+              return;
+            }
+            final t = double.tryParse(target.text) ?? 0;
+            if (t <= 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Target must be a number greater than 0')),
+              );
+              return;
+            }
+            
+            // All validation passed - save the goal
+            widget.onSave(title.text, desc.text, t, action.text, frequency);
+            Navigator.pop(context);
           },
           child: const Text('Save'),
         )

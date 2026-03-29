@@ -86,6 +86,7 @@ class GoalService {
     required String description,
     required double targetProgress,
     required String action,
+    required String frequency,
     String unit = 'units',
     String icon = 'star',
     String color = 'blue',
@@ -109,6 +110,7 @@ class GoalService {
         'icon': icon,
         'color': color,
         'action': action,
+        'frequency': frequency,
         'createdAt': Timestamp.now(),
         'updatedAt': Timestamp.now(),
       });
@@ -131,6 +133,7 @@ class GoalService {
     required String description,
     required double targetProgress,
     required String action,
+    required String frequency,
   }) async {
     final userId = currentUser?.uid;
     if (userId == null) {
@@ -148,6 +151,7 @@ class GoalService {
         'description': description,
         'targetProgress': targetProgress,
         'action': action,
+        'frequency': frequency,
         'updatedAt': Timestamp.now(),
       });
 
@@ -229,6 +233,7 @@ class GoalService {
       icon: data['icon'] ?? 'star',
       color: data['color'] ?? 'blue',
       action: data['action'] ?? '',
+      frequency: data['frequency'] ?? 'daily',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       dueDate: (data['dueDate'] as Timestamp?)?.toDate(),
     );

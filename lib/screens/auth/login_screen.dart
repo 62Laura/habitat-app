@@ -79,7 +79,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Habitat App'),
+        title: const Text('BLOOM'),
         centerTitle: true,
       ),
       body: AnimatedBuilder(
