@@ -5,8 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'screens/home/home_screen.dart';
-import 'screens/auth/login_screen.dart';
-import 'screens/auth/signup_screen.dart';
 import 'providers/theme_provider.dart';
 import 'widgets/auth_gate.dart';
 import 'theme/app_theme.dart';
@@ -37,8 +35,6 @@ class HabitTrackerApp extends ConsumerWidget {
       themeMode: themeMode,
       home: const AuthGate(),
       routes: {
-        '/login': (context) => const LoginScreen(),
-        '/signup': (context) => const SignupScreen(),
         '/home': (context) => const HomeScreen(),
       },
       debugShowCheckedModeBanner: false,

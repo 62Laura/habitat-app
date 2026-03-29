@@ -11,6 +11,7 @@ class AuthState {
   final String? errorMessage;
   final int stateVersion; // Add version to force rebuilds
   final DateTime timestamp; // Add timestamp to force rebuilds
+  final String? userName; // User's display name from Firestore
 
   AuthState({
     this.user,
@@ -19,6 +20,7 @@ class AuthState {
     this.errorMessage,
     this.stateVersion = 0,
     DateTime? timestamp,
+    this.userName,
   }) : timestamp = timestamp ?? DateTime.now();
 
   bool get isAuthenticated {
@@ -34,6 +36,7 @@ class AuthState {
     String? errorMessage,
     int? stateVersion,
     DateTime? timestamp,
+    String? userName,
   }) {
     return AuthState(
       user: user ?? this.user,
@@ -42,6 +45,7 @@ class AuthState {
       errorMessage: errorMessage,
       stateVersion: stateVersion ?? this.stateVersion,
       timestamp: timestamp ?? this.timestamp,
+      userName: userName ?? this.userName,
     );
   }
 
@@ -54,7 +58,8 @@ class AuthState {
         other.isInitialized == isInitialized &&
         other.errorMessage == errorMessage &&
         other.stateVersion == stateVersion &&
-        other.timestamp == timestamp;
+        other.timestamp == timestamp &&
+        other.userName == userName;
   }
 
   @override
@@ -64,7 +69,8 @@ class AuthState {
         isInitialized.hashCode ^
         errorMessage.hashCode ^
         stateVersion.hashCode ^
-        timestamp.hashCode;
+        timestamp.hashCode ^
+        userName.hashCode;
   }
 }
 
@@ -89,9 +95,24 @@ class AuthNotifier extends StateNotifier<AuthState> {
       
       // Listen to auth state changes - this will handle initial state and all subsequent changes
       _authSubscription = _authService.authStateChanges.listen(
-        (auth.User? user) {
+        (auth.User? user) async {
           if (kDebugMode) print('AuthNotifier: Auth state changed - $user');
           if (kDebugMode) print('AuthNotifier: Current state before update - user: ${state.user}, isInitialized: ${state.isInitialized}');
+          
+          String? userName;
+          
+          // Fetch user name from Firestore if user is authenticated
+          if (user != null) {
+            try {
+              final userDoc = await _authService.getUserData(user.uid);
+              if (userDoc.exists) {
+                userName = userDoc.get('name') as String?;
+                if (kDebugMode) print('AuthNotifier: Fetched user name from Firestore: $userName');
+              }
+            } catch (e) {
+              if (kDebugMode) print('AuthNotifier: Error fetching user name - $e');
+            }
+          }
           
           // Simple state update
           final newState = AuthState(
@@ -101,9 +122,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
             errorMessage: null,
             stateVersion: state.stateVersion + 1,
             timestamp: DateTime.now(),
+            userName: userName,
           );
           
-          if (kDebugMode) print('AuthNotifier: Setting new state - user: ${newState.user}, isAuthenticated: ${newState.isAuthenticated}, version: ${newState.stateVersion}');
+          if (kDebugMode) print('AuthNotifier: Setting new state - user: ${newState.user}, isAuthenticated: ${newState.isAuthenticated}, version: ${newState.stateVersion}, userName: ${newState.userName}');
           
           // Single state update
           state = newState;

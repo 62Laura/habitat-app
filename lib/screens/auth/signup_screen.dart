@@ -6,7 +6,9 @@ import '../../providers/auth_provider_provider.dart';
 import '../../theme/app_theme.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+  const SignupScreen({Key? key, this.onSwitchToLogin}) : super(key: key);
+
+  final VoidCallback? onSwitchToLogin;
 
   @override
   ConsumerState<SignupScreen> createState() => _SignupScreenState();
@@ -235,13 +237,15 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   await authNotifier.signOut();
                   
                   // Show success message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Account created successfully! Please sign in with your credentials.'),
-                      backgroundColor: Colors.green,
-                      duration: Duration(seconds: 3),
-                    ),
-                  );
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Account created successfully! Please sign in with your credentials.'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
                   
                   // Clear the form
                   _nameController.clear();
@@ -249,12 +253,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   _passwordController.clear();
                   _confirmPasswordController.clear();
                   
-                  // Navigate to login screen after a short delay
-                  Future.delayed(const Duration(milliseconds: 1500), () {
-                    if (mounted) {
-                      Navigator.of(context).pushReplacementNamed('/login');
-                    }
-                  });
+                  // Switch to login screen using callback
+                  if (mounted && widget.onSwitchToLogin != null) {
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      if (mounted) {
+                        widget.onSwitchToLogin!();
+                      }
+                    });
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -280,9 +286,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               children: [
                 const Text('Already have an account? '),
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacementNamed('/login');
-                  },
+                  onPressed: widget.onSwitchToLogin,
                   child: const Text('Sign In'),
                 ),
               ],

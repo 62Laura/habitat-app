@@ -6,7 +6,9 @@ import '../../providers/auth_provider_provider.dart';
 import '../../theme/app_theme.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({Key? key, this.onSwitchToSignup}) : super(key: key);
+
+  final VoidCallback? onSwitchToSignup;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -308,9 +310,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                         children: [
                           const Text("Don't have an account? "),
                           TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pushReplacementNamed('/signup');
-                            },
+                            onPressed: widget.onSwitchToSignup,
                             child: const Text('Sign Up'),
                           ),
                         ],

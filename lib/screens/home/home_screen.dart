@@ -78,7 +78,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final goalsState = ref.watch(goalsProvider);
         
         final user = authState.user;
-        final displayName = user?.displayName ?? user?.email?.split('@')[0] ?? 'User';
+        // Extract first name only from the full name
+        final firstName = authState.userName?.split(' ').first ?? user?.displayName?.split(' ').first ?? user?.email?.split('@')[0] ?? 'User';
+        final displayName = firstName;
         final habits = habitsState.habits;
         final goals = goalsState.goals;
         

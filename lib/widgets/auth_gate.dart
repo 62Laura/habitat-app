@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider_provider.dart';
 import '../screens/home/home_screen.dart';
-import '../screens/auth/login_screen.dart';
+import '../screens/auth/auth_screen.dart';
 import '../services/auth_service.dart';
 
 /// AuthGate widget that manages the authentication flow
@@ -48,8 +48,8 @@ class AuthGate extends ConsumerWidget {
         }
 
         // Show login screen if not authenticated
-        if (kDebugMode) print('AuthGate: User not authenticated, showing LoginScreen');
-        return const LoginScreen();
+        if (kDebugMode) print('AuthGate: User not authenticated, showing AuthScreen');
+        return const AuthScreen(initialScreen: AuthScreenType.login);
       },
     );
   }
